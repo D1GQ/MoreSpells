@@ -18,7 +18,7 @@ public class MSPlugin : BaseUnityPlugin
     internal static MSPlugin Instance { get; private set; }
     private const string MyGUID = "com.d1gq.more.spells";
     internal const string PluginName = "MoreSpells";
-    private const string VersionString = "1.1.0";
+    private const string VersionString = "1.1.1";
 
     private static Harmony? Harmony;
     internal static ManualLogSource Log => Instance._log;
