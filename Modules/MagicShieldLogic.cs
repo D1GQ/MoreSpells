@@ -10,7 +10,7 @@ internal class MagicShieldLogic : SpellLogic
     private GameObject? orb;
     private float shieldLife = 15f;
 
-    public override void CastSpell(GameObject playerObj, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
+    public override void CastSpell(GameObject playerObj, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
     {
         orb = Instantiate(OrbPrefab);
         if (orb != null)
