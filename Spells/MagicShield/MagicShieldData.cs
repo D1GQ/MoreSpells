@@ -1,7 +1,7 @@
 ﻿using BlackMagicAPI.Modules.Spells;
 using UnityEngine;
 
-namespace MoreSpells.Modules;
+namespace MoreSpells.Spells.MagicShield;
 
 internal class MagicShieldData : SpellData
 {
@@ -9,7 +9,7 @@ internal class MagicShieldData : SpellData
 
     public override string[] SubNames => ["Magic", "Shield"];
 
-    public override float Cooldown => 25;
+    public override float Cooldown => 35f;
 
     public override Color GlowColor => Color.blue;
 }

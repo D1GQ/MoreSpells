@@ -2,21 +2,29 @@
 using System.Collections;
 using UnityEngine;
 
-namespace MoreSpells.Modules;
+namespace MoreSpells.Spells.MagicShield;
 
 internal class MagicShieldLogic : SpellLogic
 {
+    // Prefab reference for the shield orb visual effect
     private static GameObject? OrbPrefab;
+    // Instance of the spawned orb
     private GameObject? orb;
+    // Duration/health of the shield in seconds
     private float shieldLife = 15f;
 
+    // Main spell casting method
     public override void CastSpell(GameObject playerObj, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
     {
+        // Instantiate the shield orb
         orb = Instantiate(OrbPrefab);
         if (orb != null)
         {
+            // Activate and parent it to the player
             orb.SetActive(true);
             orb.transform.SetParent(playerObj.transform, false);
+
+            // Get player component and start protection routine
             var player = playerObj.GetComponent<PlayerMovement>();
             if (player != null)
             {
@@ -25,44 +33,46 @@ internal class MagicShieldLogic : SpellLogic
         }
     }
 
+    // Coroutine that handles all shield functionality
     private IEnumerator CoProtect(PlayerMovement player)
     {
-        // Exit if player reference is null
+        // Safety check - exit if player reference is null
         if (player == null) yield break;
 
-        // Initialize variables:
+        // Initialize shield variables:
         float lastHealth = player.playerHealth; // Track health from previous frame
-        float healthRecoveryRate = 3f;         // Health recovery per second
+        float healthRecoveryRate = 3f;         // Health recovery per second (when not taking damage)
         float shieldDamagePenalty = 0.2f;      // Shield penalty when taking damage (20% of damage taken)
 
-        // Main shield loop - runs while shield has life, player exists and isn't dead
+        // Main shield loop
         while (shieldLife > 0 && player != null && !player.isDead)
         {
-            // Deplete shield over time
+            // Deplete shield over time (duration effect)
             shieldLife -= Time.deltaTime;
 
-            // If player gets frozen, trigger breakout and end shield
+            // Special case: If player gets frozen
             if (player.isFrozen)
             {
+                // Trigger breakout effect and immediately end shield
                 player.breakoutFireball = true;
                 yield break;
             }
 
-            // Damage handling:
-            // If player took damage since last frame
+            // Damage handling system:
+            // Case 1: Player took damage since last frame
             if (player.playerHealth < lastHealth)
             {
-                // Calculate damage taken and reduce it by 75%
+                // Calculate damage taken and reduce it by 75% (25% damage gets through)
                 float damageTaken = lastHealth - player.playerHealth;
-                player.playerHealth = lastHealth - (damageTaken * 0.75f);
+                player.playerHealth = lastHealth - damageTaken * 0.75f;
 
-                // Apply penalty to shield based on damage taken
+                // Apply penalty to shield based on damage taken (20% of original damage)
                 shieldLife -= damageTaken * shieldDamagePenalty;
             }
-            // If player is not at full health
+            // Case 2: Player is not at full health but not taking damage
             else if (player.playerHealth < 100f)
             {
-                // Gradually recover health
+                // Gradually recover health (3 HP per second)
                 float healthToAdd = healthRecoveryRate * Time.deltaTime;
                 player.playerHealth = Mathf.Min(player.playerHealth + healthToAdd, 100f);
 
@@ -70,11 +80,11 @@ internal class MagicShieldLogic : SpellLogic
                 shieldLife -= healthToAdd * 0.2f;
             }
 
-            // Limit fire timer to 1 second if it exceeds
+            // Fire resistance effect: Limit fire timer to 1 second max
             if (player.fireTimer > 1f)
                 player.fireTimer = 1f;
 
-            // Gradually deplete stamina while shield is active
+            // Stamina drain effect: Gradually deplete stamina while shield is active
             if (player.stamina > 0)
                 player.stamina -= 3f * player.stamina * 0.1f * Time.deltaTime;
 
@@ -87,17 +97,20 @@ internal class MagicShieldLogic : SpellLogic
         // Trigger break animation if orb exists
         orb?.GetComponent<Animator>().SetTrigger("Break");
 
-        // Wait for animation to play
+        // Wait for animation to play (0.5 seconds)
         yield return new WaitForSeconds(0.5f);
 
-        // Clean up orb and object
+        // Clean up orb and spell object
         Destroy(orb);
-        Destroy(gameObject);
+        DisposeSpell();
     }
 
+    // Called when the spell prefab is created to load required assets
     public override void OnPrefabCreatedAutomatically(GameObject prefab)
     {
-        OrbPrefab = MSPlugin.SpellsAssets?.LoadAsset<GameObject>("Assets/Spells/MagicShield.prefab");
+        // Load the shield orb prefab from assets
+        OrbPrefab = MSPlugin.SpellsAssets?.LoadAsset<GameObject>("Assets/SpellAssets/Spells/MagicShield.prefab");
+        // Ensure it persists between scene loads
         DontDestroyOnLoad(OrbPrefab);
     }
 }

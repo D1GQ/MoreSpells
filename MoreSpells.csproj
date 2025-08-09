@@ -33,8 +33,4 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="copy &quot;$(TargetDir)MoreSpells.dll&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Mage Arena\Modded\BepInEx\plugins\MoreSpells&quot;" />
-	</Target>
 </Project>

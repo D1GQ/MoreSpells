@@ -3,7 +3,8 @@ using BepInEx.Logging;
 using BlackMagicAPI.Helpers;
 using BlackMagicAPI.Managers;
 using HarmonyLib;
-using MoreSpells.Modules;
+using MoreSpells.Spells.EchoLocation;
+using MoreSpells.Spells.MagicShield;
 using System.Reflection;
 using UnityEngine;
 
@@ -16,9 +17,9 @@ namespace MoreSpells;
 public class MSPlugin : BaseUnityPlugin
 {
     internal static MSPlugin Instance { get; private set; }
-    private const string MyGUID = "com.d1gq.more.spells";
+    private const string MyGUID = "com.d1gq.morespells";
     internal const string PluginName = "MoreSpells";
-    private const string VersionString = "1.1.1";
+    private const string VersionString = "1.2.0";
 
     private static Harmony? Harmony;
     internal static ManualLogSource Log => Instance._log;
@@ -37,5 +38,6 @@ public class MSPlugin : BaseUnityPlugin
 
         SpellsAssets = Assembly.GetExecutingAssembly().LoadAssetBundleFromResources("MoreSpells.Resources.spells");
         BlackMagicManager.RegisterSpell(this, typeof(MagicShieldData), typeof(MagicShieldLogic));
+        BlackMagicManager.RegisterSpell(this, typeof(EchoLocationData), typeof(EchoLocationLogic));
     }
 }
