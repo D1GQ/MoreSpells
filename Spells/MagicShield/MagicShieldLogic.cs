@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MoreSpells.Spells.MagicShield;
 
-internal class MagicShieldLogic : SpellLogic
+public class MagicShieldLogic : SpellLogic
 {
     // Prefab reference for the shield orb visual effect
     private static GameObject? OrbPrefab;

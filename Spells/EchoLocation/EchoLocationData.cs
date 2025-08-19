@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MoreSpells.Spells.EchoLocation;
 
-internal class EchoLocationData : SpellData
+public class EchoLocationData : SpellData
 {
     public override string Name => "Echo Location";
 

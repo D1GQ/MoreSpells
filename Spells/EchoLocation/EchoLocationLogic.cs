@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MoreSpells.Spells.EchoLocation;
 
-internal class EchoLocationLogic : SpellLogic
+public class EchoLocationLogic : SpellLogic
 {
     // Cache for the shader that will be used to highlight players
     private static Shader? shaderPefab;

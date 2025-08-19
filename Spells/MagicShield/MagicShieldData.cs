@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MoreSpells.Spells.MagicShield;
 
-internal class MagicShieldData : SpellData
+public class MagicShieldData : SpellData
 {
     public override string Name => "Magic Shield";
 
