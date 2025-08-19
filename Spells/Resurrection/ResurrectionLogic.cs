@@ -137,7 +137,7 @@ public class ResurrectionLogic : SpellLogic
         }
     }
 
-    private PlayerMovement? TryGetTarget(PlayerMovement caster, Vector3 spawnPos, Vector3 viewDirectionVector)
+    private PlayerMovement? TryGetTarget(PlayerMovement caster, Vector3 spawnPos, Vector3 viewDirectionVector, int level)
     {
         // Get all player objects in the scene
         PlayerMovement[] allPlayers = GameObject.FindGameObjectsWithTag("Player").Select(player => player.GetComponent<PlayerMovement>()).ToArray();
@@ -145,8 +145,8 @@ public class ResurrectionLogic : SpellLogic
         float closestDistance = float.MaxValue;
 
         // Configuration for target selection
-        float maxAngle = 40f;  // Maximum angle from view direction
-        float maxDistance = 5f; // Maximum distance for valid target
+        float maxAngle = 40f + (5f * (level - 1));  // Maximum angle from view direction
+        float maxDistance = 5f + (1.5f * (level - 1)); // Maximum distance for valid target
 
         Vector3 viewDirection = viewDirectionVector.normalized;
 
@@ -191,7 +191,7 @@ public class ResurrectionLogic : SpellLogic
 
     public override void WriteData(DataWriter dataWriter, PageController page, GameObject playerObj, Vector3 spawnPos, Vector3 viewDirectionVector, int level)
     {
-        var target = TryGetTarget(playerObj.GetComponent<PlayerMovement>(), spawnPos, viewDirectionVector);
+        var target = TryGetTarget(playerObj.GetComponent<PlayerMovement>(), spawnPos, viewDirectionVector, level);
         if (target != null)
         {
             dataWriter.Write(0);  // Success code
