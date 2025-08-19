@@ -146,7 +146,7 @@ public class ResurrectionLogic : SpellLogic
 
         // Configuration for target selection
         float maxAngle = 40f + (5f * (level - 1));  // Maximum angle from view direction
-        float maxDistance = 5f + (1.5f * (level - 1)); // Maximum distance for valid target
+        float maxDistance = 5f + (0.5f * (level - 1)); // Maximum distance for valid target
 
         Vector3 viewDirection = viewDirectionVector.normalized;
 
