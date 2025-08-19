@@ -10,4 +10,6 @@ public class EchoLocationData : SpellData
     public override float Cooldown => 30f;
 
     public override Color GlowColor => Color.gray;
+
+    public override bool CanSpawnInTeamChest => true;
 }

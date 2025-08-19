@@ -10,6 +10,4 @@ public class ResurrectionData : SpellData
     public override float Cooldown => 60f;
 
     public override Color GlowColor => Color.cyan;
-
-    public override bool DebugForceSpawn => true;
 }
