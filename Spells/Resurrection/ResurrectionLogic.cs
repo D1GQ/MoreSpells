@@ -23,6 +23,8 @@ public class ResurrectionLogic : SpellLogic
     public override void CastSpell(GameObject playerObj, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
     {
         var caster = playerObj.GetComponent<PlayerMovement>();
+        var inv = playerObj.GetComponent<PlayerInventory>();
+        inv.canSwapItem = true;
 
         // Prevent self-resurrection and ensure there's a valid target
         if (Target == null || Target == caster)
@@ -32,9 +34,9 @@ public class ResurrectionLogic : SpellLogic
         }
 
         // Despawn the spell page if this is the host
-        if (page.NetworkManager.IsHostStarted)
+        if (inv.IsOwner)
         {
-            page.Despawn();
+            inv.destroyHandItem();
         }
 
         // Start the resurrection coroutine
@@ -197,13 +199,10 @@ public class ResurrectionLogic : SpellLogic
             dataWriter.Write(0);  // Success code
             dataWriter.Write(target.gameObject);
 
-            // Hide spell page if success, host will despawn item later in CastSpell
             var inv = playerObj.GetComponent<PlayerInventory>();
-            if (inv.GetEquippedItemID() == page.ItemID)
+            if (inv.IsOwner)
             {
-                // hide page on client while waiting for host to despawn
-                inv.Drop();
-                page.gameObject.SetActive(false);
+                inv.canSwapItem = false;
             }
         }
         else

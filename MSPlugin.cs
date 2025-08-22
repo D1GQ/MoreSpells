@@ -6,6 +6,7 @@ using HarmonyLib;
 using MoreSpells.Spells.EchoLocation;
 using MoreSpells.Spells.MagicShield;
 using MoreSpells.Spells.Resurrection;
+using MoreSpells.Spells.TheEyeOfHell;
 using System.Reflection;
 using UnityEngine;
 
@@ -20,7 +21,7 @@ public class MSPlugin : BaseUnityPlugin
     internal static MSPlugin Instance { get; private set; }
     private const string MyGUID = "com.d1gq.morespells";
     internal const string PluginName = "MoreSpells";
-    private const string VersionString = "1.3.1";
+    private const string VersionString = "1.4.0";
 
     private static Harmony? Harmony;
     internal static ManualLogSource Log => Instance._log;
@@ -41,5 +42,6 @@ public class MSPlugin : BaseUnityPlugin
         BlackMagicManager.RegisterSpell(this, typeof(MagicShieldData), typeof(MagicShieldLogic));
         BlackMagicManager.RegisterSpell(this, typeof(EchoLocationData), typeof(EchoLocationLogic));
         BlackMagicManager.RegisterSpell(this, typeof(ResurrectionData), typeof(ResurrectionLogic));
+        BlackMagicManager.RegisterSpell(this, typeof(TheEyeOfHellData), typeof(TheEyeOfHellLogic));
     }
 }
