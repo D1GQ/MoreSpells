@@ -10,6 +10,4 @@ internal class TheEyeOfHellData : SpellData
     public override float Cooldown => 60f;
 
     public override Color GlowColor => Color.red;
-
-    public override bool DebugForceSpawn => true;
 }
