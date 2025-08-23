@@ -7,9 +7,7 @@ internal class HellfireData : SpellData
 {
     public override string Name => "Hellfire";
 
-    public override float Cooldown => 5f;
+    public override float Cooldown => 40f;
 
     public override Color GlowColor => Color.yellow;
-
-    public override bool DebugForceSpawn => true;
 }
