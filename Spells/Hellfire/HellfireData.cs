@@ -10,6 +10,4 @@ internal class HellfireData : SpellData
     public override float Cooldown => 40f;
 
     public override Color GlowColor => Color.yellow;
-
-    public override bool DebugForceSpawn => true;
 }
