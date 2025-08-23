@@ -1,6 +1,5 @@
 ﻿using BlackMagicAPI.Modules.Spells;
 using FishUtilities.Attributes;
-using FishUtilities.Managers;
 using System.Collections;
 using UnityEngine;
 
@@ -22,7 +21,7 @@ internal class HellfireLogic : SpellLogic
         if (playerObj.GetComponent<PlayerMovement>().IsOwner)
         {
             // Send command to start the hellfire routine on host client
-            FishManager.SendCmd<HellfireLogic>(nameof(CmdHellfireRoutine), playerObj, viewDirectionVector);
+            CmdHellfireRoutine(playerObj, viewDirectionVector);
 
             // Start coroutine to dispose of the spell after it completes
             StartCoroutine(CoWaitDisposeSpell());
@@ -82,7 +81,7 @@ internal class HellfireLogic : SpellLogic
             Vector3 angledDirection = (groundTarget - spawnPosition).normalized;
 
             // Spawn fireball on all clients
-            FishManager.SendRpc<HellfireLogic>(nameof(RpcSpawnFireball), caster, spawnPosition, angledDirection);
+            RpcSpawnFireball(caster, spawnPosition, angledDirection);
 
             // Wait random interval before spawning next fireball
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.8f, 1f));
