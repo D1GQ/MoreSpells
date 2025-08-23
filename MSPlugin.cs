@@ -15,6 +15,7 @@ namespace MoreSpells;
 
 [BepInProcess("MageArena")]
 [BepInDependency("com.d1gq.black.magic.api", BepInDependency.DependencyFlags.HardDependency)]
+[BepInDependency("com.d1gq.fish.utilities", BepInDependency.DependencyFlags.HardDependency)]
 [BepInDependency("com.magearena.modsync", BepInDependency.DependencyFlags.HardDependency)]
 [BepInPlugin(MyGUID, PluginName, VersionString)]
 public class MSPlugin : BaseUnityPlugin
