@@ -29,7 +29,7 @@ internal class TheEyeOfHellLogic : SpellLogic
             }
 
             // Prevent casting if spell is already active or if it's already night time
-            if (active || nightAudioSwap.nightday.isNight)
+            if (active)
             {
                 DisposeSpell(); // Clean up if conditions aren't met
                 return;
@@ -44,7 +44,8 @@ internal class TheEyeOfHellLogic : SpellLogic
             // Get weather reference and start the visual/audio effects
             var weather = nightAudioSwap.nightday;
             PlayClip(); // Play the spell audio
-            StartCoroutine(CoFadeOut(weather.Sun)); // Start the sun fading effect coroutine
+            StartCoroutine(StopWeatherCycle(weather));
+            StartCoroutine(CoFadeOut(weather.Sun, weather.Moon)); // Start the sun fading effect coroutine
         }
     }
 
@@ -64,10 +65,21 @@ internal class TheEyeOfHellLogic : SpellLogic
         source.Play(); // Start playback
     }
 
-    private IEnumerator CoFadeOut(Light sun)
+    private IEnumerator StopWeatherCycle(WeatherCycle weather)
+    {
+        var lastRot = weather.rot;
+        while (true)
+        {
+            weather.rot = lastRot;
+            yield return null;
+        }
+    }
+
+    private IEnumerator CoFadeOut(Light sun, Light moon)
     {
         active = true; // Mark spell as active
         var sunColor = sun.color; // Store original sun color
+        var moonColor = moon.color; // Store original sun color
         var sunIntensity = sun.intensity; // Store original sun intensity
 
         float time = 3f; // Duration of fade effect (3 seconds)
@@ -83,6 +95,7 @@ internal class TheEyeOfHellLogic : SpellLogic
 
             // Interpolate sun properties toward target values
             sun.color = Color.Lerp(sunColor, targetColor, t);
+            moon.color = Color.Lerp(moonColor, targetColor, t);
             sun.intensity = Mathf.Lerp(sunIntensity, targetIntensity, t);
 
             yield return null; // Wait until next frame
@@ -90,6 +103,7 @@ internal class TheEyeOfHellLogic : SpellLogic
 
         // Ensure exact target values are reached
         sun.color = targetColor;
+        moon.color = targetColor;
         sun.intensity = targetIntensity;
 
         // Main spell duration (60 seconds of hellish effects)
@@ -118,13 +132,14 @@ internal class TheEyeOfHellLogic : SpellLogic
         }
 
         // After main duration, fade back to normal
-        yield return CoFadeIn(sun, (sunColor, sunIntensity));
+        yield return CoFadeIn(sun, moon, (sunColor, moonColor, sunIntensity));
     }
 
-    private IEnumerator CoFadeIn(Light sun, (Color sunColor, float sunIntensity) backto)
+    private IEnumerator CoFadeIn(Light sun, Light moon, (Color sunColor, Color moonColor, float sunIntensity) backto)
     {
         float time = 3f; // Duration of fade back effect (3 seconds)
         Color startSunColor = sun.color; // Current (red) color
+        Color startMoonColor = moon.color; // Current (red) color
         float startSunIntensity = sun.intensity; // Current (high) intensity
 
         // Animate the sun returning to normal
@@ -136,6 +151,7 @@ internal class TheEyeOfHellLogic : SpellLogic
 
             // Interpolate back to original values
             sun.color = Color.Lerp(startSunColor, backto.sunColor, t);
+            moon.color = Color.Lerp(startMoonColor, backto.moonColor, t);
             sun.intensity = Mathf.Lerp(startSunIntensity, backto.sunIntensity, t);
 
             yield return null; // Wait until next frame
@@ -143,6 +159,7 @@ internal class TheEyeOfHellLogic : SpellLogic
 
         // Ensure exact original values are restored
         sun.color = backto.sunColor;
+        moon.color = backto.moonColor;
         sun.intensity = backto.sunIntensity;
 
         // Brief additional wait before cleaning up (3.5 seconds)
@@ -171,6 +188,7 @@ internal class TheEyeOfHellLogic : SpellLogic
     protected override void OnDestroy()
     {
         base.OnDestroy();
+        StopAllCoroutines();
         active = false; // Ensure active flag is reset if object is destroyed prematurely
     }
 }
