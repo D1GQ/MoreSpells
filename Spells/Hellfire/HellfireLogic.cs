@@ -40,7 +40,7 @@ internal class HellfireLogic : SpellLogic
     }
 
     // Command method (executed on host client) to start the hellfire routine
-    [FishCmd(0)]
+    [FishCmd]
     private static void CmdHellfireRoutine(GameObject caster, Vector3 viewDirectionVector)
     {
         // Start the hellfire coroutine on the caster's PlayerMovement component
@@ -91,7 +91,7 @@ internal class HellfireLogic : SpellLogic
     }
 
     // RPC method (executed on all clients) to spawn individual fireballs
-    [FishRpc(0)]
+    [FishRpc]
     private static void RpcSpawnFireball(GameObject caster, Vector3 spawnPos, Vector3 direction)
     {
         // Instantiate the fireball prefab
