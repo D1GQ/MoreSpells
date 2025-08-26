@@ -15,17 +15,19 @@ internal class HellfireLogic : SpellLogic
     private static readonly float rangeWidth = 50f;      // Width of the area where fireballs can spawn
     private static readonly float rangeDistance = 35f;   // Distance range for fireball spawning
 
-    public override void CastSpell(GameObject playerObj, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
+    public override bool CastSpell(PlayerMovement caster, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
     {
         // Only execute on the owner client to avoid duplicate execution
-        if (playerObj.GetComponent<PlayerMovement>().IsOwner)
+        if (caster.IsOwner)
         {
             // Send command to start the hellfire routine on host client
-            CmdHellfireRoutine(playerObj, viewDirectionVector);
+            CmdHellfireRoutine(caster.gameObject, viewDirectionVector);
 
             // Start coroutine to dispose of the spell after it completes
             StartCoroutine(CoWaitDisposeSpell());
         }
+
+        return true;
     }
 
     // Coroutine to wait for spell duration and then dispose of it

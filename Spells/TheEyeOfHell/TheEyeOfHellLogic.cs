@@ -12,7 +12,7 @@ internal class TheEyeOfHellLogic : SpellLogic
     private static bool active; // Tracks if this spell is currently active (static so only one instance can be active at a time)
     private static AudioClip? clip; // Audio clip for the spell effect (static to load once and share across instances)
 
-    public override void CastSpell(GameObject playerObj, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
+    public override bool CastSpell(PlayerMovement caster, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
     {
         // Find the NightAudioSwap component which manages day/night cycle audio
         var nightAudioSwap = FindFirstObjectByType<NightAudioSwap>();
@@ -20,7 +20,7 @@ internal class TheEyeOfHellLogic : SpellLogic
         if (nightAudioSwap != null)
         {
             // Get the player's inventory to check ownership and manage items
-            var inv = playerObj.GetComponent<PlayerInventory>();
+            var inv = caster.GetComponent<PlayerInventory>();
 
             // If this client owns the player, allow item swapping
             if (inv.IsOwner)
@@ -32,7 +32,7 @@ internal class TheEyeOfHellLogic : SpellLogic
             if (active)
             {
                 DisposeSpell(); // Clean up if conditions aren't met
-                return;
+                return true;
             }
 
             // If player owns this character, destroy the hand item (spell page)
@@ -47,6 +47,8 @@ internal class TheEyeOfHellLogic : SpellLogic
             StartCoroutine(StopWeatherCycle(weather));
             StartCoroutine(CoFadeOut(weather.Sun, weather.Moon)); // Start the sun fading effect coroutine
         }
+
+        return true;
     }
 
     private void PlayClip()
@@ -169,10 +171,10 @@ internal class TheEyeOfHellLogic : SpellLogic
         DisposeSpell(); // Clean up spell resources
     }
 
-    public override void WriteData(DataWriter dataWriter, PageController page, GameObject playerObj, Vector3 spawnPos, Vector3 viewDirectionVector, int level)
+    public override void WriteData(DataWriter dataWriter, PageController page, PlayerMovement caster, Vector3 spawnPos, Vector3 viewDirectionVector, int level)
     {
         // Prevent item swapping during spell casting on network
-        var inv = playerObj.GetComponent<PlayerInventory>();
+        var inv = caster.GetComponent<PlayerInventory>();
         if (inv.IsOwner)
         {
             inv.canSwapItem = false;

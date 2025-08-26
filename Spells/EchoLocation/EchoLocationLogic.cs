@@ -12,17 +12,16 @@ public class EchoLocationLogic : SpellLogic
     private float duration = 10f;
 
     // Main spell casting method
-    public override void CastSpell(GameObject playerObj, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
+    public override bool CastSpell(PlayerMovement caster, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
     {
-        // Get the PlayerMovement component of the caster
-        var owner = playerObj.GetComponent<PlayerMovement>();
-        // Only execute if this is the local player
-        if (!owner.IsOwner) return;
+        if (!caster.IsOwner) return true;
 
         // Find all player objects and get their PlayerMovement components
         var players = GameObject.FindGameObjectsWithTag("Player").Select(obj => obj.GetComponent<PlayerMovement>()).ToArray();
         // Start the coroutine that handles the spell effect, filtering out the caster
-        StartCoroutine(CoCastSpell(owner, players.Where(p => p != owner).ToArray(), castingLevel));
+        StartCoroutine(CoCastSpell(caster, players.Where(p => p != caster).ToArray(), castingLevel));
+
+        return true;
     }
 
     // Coroutine that manages the spell's duration and periodic reveals

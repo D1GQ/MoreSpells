@@ -20,17 +20,16 @@ public class ResurrectionLogic : SpellLogic
     // The target player to be resurrected
     private PlayerMovement? Target;
 
-    public override void CastSpell(GameObject playerObj, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
+    public override bool CastSpell(PlayerMovement caster, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
     {
-        var caster = playerObj.GetComponent<PlayerMovement>();
-        var inv = playerObj.GetComponent<PlayerInventory>();
+        var inv = caster.GetComponent<PlayerInventory>();
         inv.canSwapItem = true;
 
         // Prevent self-resurrection and ensure there's a valid target
         if (Target == null || Target == caster)
         {
             DisposeSpell();
-            return;
+            return true;
         }
 
         // Despawn the spell page if this is the host
@@ -41,6 +40,8 @@ public class ResurrectionLogic : SpellLogic
 
         // Start the resurrection coroutine
         StartCoroutine(CoResurrection(Target));
+
+        return true;
     }
 
     private IEnumerator CoResurrection(PlayerMovement player)
@@ -191,15 +192,15 @@ public class ResurrectionLogic : SpellLogic
         return closestPlayer;
     }
 
-    public override void WriteData(DataWriter dataWriter, PageController page, GameObject playerObj, Vector3 spawnPos, Vector3 viewDirectionVector, int level)
+    public override void WriteData(DataWriter dataWriter, PageController page, PlayerMovement caster, Vector3 spawnPos, Vector3 viewDirectionVector, int level)
     {
-        var target = TryGetTarget(playerObj.GetComponent<PlayerMovement>(), spawnPos, viewDirectionVector, level);
+        var target = TryGetTarget(caster, spawnPos, viewDirectionVector, level);
         if (target != null)
         {
             dataWriter.Write(0);  // Success code
             dataWriter.Write(target.gameObject);
 
-            var inv = playerObj.GetComponent<PlayerInventory>();
+            var inv = caster.GetComponent<PlayerInventory>();
             if (inv.IsOwner)
             {
                 inv.canSwapItem = false;

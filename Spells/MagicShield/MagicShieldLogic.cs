@@ -14,7 +14,7 @@ public class MagicShieldLogic : SpellLogic
     private float shieldLife = 15f;
 
     // Main spell casting method
-    public override void CastSpell(GameObject playerObj, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
+    public override bool CastSpell(PlayerMovement caster, PageController page, Vector3 spawnPos, Vector3 viewDirectionVector, int castingLevel)
     {
         // Instantiate the shield orb
         orb = Instantiate(OrbPrefab);
@@ -22,15 +22,13 @@ public class MagicShieldLogic : SpellLogic
         {
             // Activate and parent it to the player
             orb.SetActive(true);
-            orb.transform.SetParent(playerObj.transform, false);
+            orb.transform.SetParent(caster.transform, false);
 
             // Get player component and start protection routine
-            var player = playerObj.GetComponent<PlayerMovement>();
-            if (player != null)
-            {
-                StartCoroutine(CoProtect(player));
-            }
+            StartCoroutine(CoProtect(caster));
         }
+
+        return true;
     }
 
     // Coroutine that handles all shield functionality
