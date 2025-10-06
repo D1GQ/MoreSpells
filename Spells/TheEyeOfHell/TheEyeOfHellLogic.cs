@@ -32,7 +32,7 @@ internal class TheEyeOfHellLogic : SpellLogic
             if (active)
             {
                 DisposeSpell(); // Clean up if conditions aren't met
-                return true;
+                return false;
             }
 
             // If player owns this character, destroy the hand item (spell page)
@@ -57,7 +57,7 @@ internal class TheEyeOfHellLogic : SpellLogic
         var source = gameObject.AddComponent<AudioSource>();
         source.clip = clip;
         source.spatialBlend = 0f; // 2D sound (not spatialized)
-        source.volume = 0.4f; // Moderate volume
+        source.volume = 0.3f; // Moderate volume
         source.playOnAwake = false; // Don't play automatically
         source.loop = false; // Play once
         source.minDistance = 0.01f; // Very close minimum distance
@@ -166,6 +166,18 @@ internal class TheEyeOfHellLogic : SpellLogic
 
         // Brief additional wait before cleaning up (3.5 seconds)
         yield return new WaitForSeconds(3.5f);
+        yield return CoCooldown();
+    }
+
+    // go on cooldown period (5 minutes) before spell can be cast again!
+    private IEnumerator CoCooldown()
+    {
+        float time = 60f * 5f;
+        while (time > 0f)
+        {
+            time -= Time.deltaTime;
+            yield return null;
+        }
 
         active = false; // Mark spell as no longer active
         DisposeSpell(); // Clean up spell resources
