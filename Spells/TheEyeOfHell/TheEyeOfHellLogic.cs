@@ -166,10 +166,16 @@ internal class TheEyeOfHellLogic : SpellLogic
 
         // Brief additional wait before cleaning up (3.5 seconds)
         yield return new WaitForSeconds(3.5f);
-        yield return CoCooldown();
+        Cooldown();
     }
 
     // go on cooldown period (5 minutes) before spell can be cast again!
+    private void Cooldown()
+    {
+        StopAllCoroutines();
+        StartCoroutine(CoCooldown());
+    }
+
     private IEnumerator CoCooldown()
     {
         float time = 60f * 5f;
